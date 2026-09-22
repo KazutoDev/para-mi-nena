@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Para mi Ana</title>
+<meta name="color-scheme" content="light dark">
+<style>
+  :root{
+    --cream:#fbf6ea;
+    --cream-deep:#f3e9d2;
+    --paper:#fffdf7;
+    --gold:#dfa514;
+    --gold-deep:#b3810c;
+    --gold-soft:#f4cd5b;
+    --green:#7f9a6a;
+    --green-deep:#5d7a4b;
+    --ink:#3c3115;
+    --ink-soft:#7a6a45;
+    --line: rgba(60,49,21,0.12);
+    --shadow: rgba(60,49,21,0.16);
+    --focus:#8a5b0f;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark){
+      --cream:#241d10;
+      --cream-deep:#2c2413;
+      --paper:#2a2214;
+      --gold:#e6b136;
+      --gold-deep:#f0c65a;
+      --gold-soft:#f2cf6d;
+      --green:#93ab7f;
+      --green-deep:#a9c093;
+      --ink:#f4ead0;
+      --ink-soft:#cbb98c;
+      --line: rgba(244,234,208,0.14);
+      --shadow: rgba(0,0,0,0.4);
+      --focus:#f0c65a;
+    }
+  }
+  :root[data-theme="dark"]{
+    --cream:#241d10;
+    --cream-deep:#2c2413;
+    --paper:#2a2214;
+    --gold:#e6b136;
+    --gold-deep:#f0c65a;
+    --gold-soft:#f2cf6d;
+    --green:#93ab7f;
+    --green-deep:#a9c093;
+    --ink:#f4ead0;
+    --ink-soft:#cbb98c;
+    --line: rgba(244,234,208,0.14);
+    --shadow: rgba(0,0,0,0.4);
+    --focus:#f0c65a;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{
+    scroll-behavior:smooth;
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+  }
+  body{
+    background: linear-gradient(180deg, var(--cream) 0%, var(--cream-deep) 100%);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height:1.65;
+    -webkit-font-smoothing: antialiased;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    overflow-x:hidden;
+  }
+  .serif{
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  }
+  img, svg{max-width:100%; display:block;}
+  button{font-family:inherit;}
+  a{color:inherit;}
+
+  /* ---------- layout helpers ---------- */
+  .section{
+    position:relative;
+    width:100%;
+    padding: 6.5rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .section.tight{padding-top:4rem; padding-bottom:4rem;}
+  .center{text-align:center;}
+  .eyebrow-free{ } /* intentionally no all-caps eyebrow labels per design intent */
+
+  .reveal{
+    opacity:0;
+    transform: translateY(18px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.visible{
+    opacity:1;
+    transform:none;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+    html{scroll-behavior:auto;}
+  }
+
+  /* ---------- falling petals (background, decorative) ---------- */
+  .petal-field{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:1;
+  }
+  .petal{
+    position:absolute;
+    top:-5vh;
+    width:14px;
+    height:18px;
+    background: linear-gradient(160deg, var(--gold-soft), var(--gold));
+    border-radius: 70% 30% 65% 35% / 60% 55% 45% 40%;
+    opacity:0.55;
+    will-change: transform;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  @keyframes fall{
+    0%{ transform: translateY(-10vh) translateX(0) rotate(0deg); }
+    100%{ transform: translateY(110vh) translateX(var(--drift, 40px)) rotate(340deg); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .petal{ animation: none; opacity:0.25; top: 8vh; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    min-height: 100svh;
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding: calc(2rem + env(safe-area-inset-top, 0px)) 1.5rem calc(2rem + env(safe-area-inset-bottom, 0px));
+    z-index:2;
+  }
+  .hero-flower{
+    width: 84px;
+    height:84px;
+    margin-bottom: 1.6rem;
+    animation: sway 6s ease-in-out infinite;
+    transform-origin: 50% 90%;
+  }
+  @keyframes sway{
+    0%,100%{ transform: rotate(-4deg); }
+    50%{ transform: rotate(4deg); }
+  }
+  @media (prefers-reduced-motion: reduce){ .hero-flower{animation:none;} }
+
+  .hero h1{
+    font-size: clamp(2.1rem, 8vw, 3rem);
+    font-weight:400;
+    color: var(--gold-deep);
+    letter-spacing:0.01em;
+    margin-bottom: 0.35rem;
+  }
+  .hero h2{
+    font-size: clamp(1.05rem, 4.2vw, 1.35rem);
+    font-weight:400;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-bottom: 1.75rem;
+  }
+  .hero p{
+    max-width: 30ch;
+    font-size: 1.05rem;
+    color: var(--ink);
+    margin-bottom: 2.6rem;
+  }
+  .btn{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+    color: #3c2c05;
+    font-size: 1.05rem;
+    font-weight:600;
+    padding: 1rem 2.1rem;
+    border-radius: 999px;
+    box-shadow: 0 10px 24px -8px var(--shadow);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    min-height:52px;
+  }
+  .btn:hover{ transform: translateY(-2px); box-shadow: 0 14px 28px -10px var(--shadow); }
+  .btn:active{ transform: translateY(0px) scale(0.98); }
+  .btn:focus-visible{ outline: 3px solid var(--focus); outline-offset:3px; }
+
+  .scroll-hint{
+    appearance:none;
+    background:none;
+    border:none;
+    cursor:pointer;
+    position:absolute;
+    bottom: calc(1.6rem + env(safe-area-inset-bottom, 0px));
+    font-size:0.8rem;
+    color: var(--ink-soft);
+    opacity:0.7;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0.35rem;
+  }
+  .scroll-hint:focus-visible{ outline: 3px solid var(--focus); outline-offset:3px; }
+  .scroll-hint svg{ width:14px; height:14px; animation: bob 2s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(5px);} }
+  @media (prefers-reduced-motion: reduce){ .scroll-hint svg{animation:none;} }
+
+  /* ---------- intro / letter shared text style ---------- */
+  .lede{
+    font-size: 1.15rem;
+    color: var(--ink);
+  }
+  .lede p + p{ margin-top:1.1rem; }
+  .signature{
+    margin-top:1.6rem;
+    font-family: Georgia, serif;
+    font-style:italic;
+    color: var(--gold-deep);
+  }
+
+  h3.title{
+    font-family: Georgia, "Iowan Old Style", serif;
+    font-weight:400;
+    font-size: clamp(1.5rem, 5vw, 1.9rem);
+    color: var(--gold-deep);
+    margin-bottom: 1.6rem;
+  }
+
+  /* ---------- letter card ---------- */
+  .letter-wrap{
+    perspective: 1200px;
+  }
+  .letter-card{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 2.2rem 1.7rem;
+    box-shadow: 0 18px 40px -18px var(--shadow);
+    position:relative;
+    transform-origin: top center;
+  }
+  .letter-card::before{
+    content:"";
+    position:absolute;
+    top:0; left:1.6rem; right:1.6rem;
+    height:1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .letter-seal{
+    width:46px; height:46px;
+    margin: 0 auto 1.2rem;
+  }
+  .letter-body p{ margin-bottom:1rem; font-size:1.06rem; }
+  .letter-body p:last-of-type{ margin-bottom:0; }
+
+  /* ---------- flowers interactive section ---------- */
+  .flower-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.1rem;
+    margin-top: 2rem;
+  }
+  @media (max-width:420px){
+    .flower-grid{ grid-template-columns: repeat(2, 1fr); }
+  }
+  .flower-btn{
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding: 0.6rem 0.3rem 0.9rem;
+    border-radius: 16px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0.55rem;
+    transition: background 0.25s ease;
+  }
+  .flower-btn:hover{ background: rgba(223,165,20,0.08); }
+  .flower-btn:focus-visible{ outline: 3px solid var(--focus); outline-offset:2px; }
+  .flower-svg{
+    width: 100%;
+    max-width:72px;
+    transition: transform 0.35s ease;
+  }
+  .flower-btn:hover .flower-svg,
+  .flower-btn.open .flower-svg{ transform: scale(1.08) rotate(-2deg); }
+  .petal-shape{ fill: url(#petalGradient); }
+  .flower-center{ fill: var(--gold-deep); }
+  .flower-stem{ stroke: var(--green-deep); stroke-width:3; fill:none; stroke-linecap:round; }
+  .flower-leaf{ fill: var(--green); }
+
+  .flower-caption{
+    font-size:0.82rem;
+    color: var(--ink-soft);
+  }
+  .flower-note{
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition: max-height 0.4s ease, opacity 0.4s ease, margin 0.4s ease;
+    font-size:0.92rem;
+    color: var(--gold-deep);
+    font-style: italic;
+    text-align:center;
+  }
+  .flower-btn.open .flower-note{
+    max-height:80px;
+    opacity:1;
+    margin-top:0.15rem;
+  }
+
+  .flower-hint{
+    text-align:center;
+    font-size:0.85rem;
+    color: var(--ink-soft);
+    margin-top:1.8rem;
+  }
+
+  /* ---------- love list ---------- */
+  .love-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+    margin-top:1.8rem;
+  }
+  @media (min-width:560px){
+    .love-grid{ grid-template-columns: 1fr 1fr; }
+  }
+  .love-card{
+    background: var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding: 1.1rem 1.2rem;
+    font-size:1rem;
+    box-shadow: 0 8px 20px -14px var(--shadow);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display:flex;
+    gap:0.7rem;
+    align-items:flex-start;
+  }
+  .love-card:hover{ transform: translateY(-3px); box-shadow: 0 14px 26px -16px var(--shadow); }
+  .love-card svg{ width:18px; height:18px; flex-shrink:0; margin-top:0.2rem; fill: var(--gold); }
+
+  /* ---------- memory / date section ---------- */
+  .date-block{
+    text-align:center;
+  }
+  .date-num{
+    font-family: Georgia, serif;
+    font-size: clamp(2.1rem, 9vw, 2.9rem);
+    color: var(--gold-deep);
+  }
+  .date-sub{
+    font-size:1.05rem;
+    color: var(--ink-soft);
+    font-style:italic;
+    margin-top:0.3rem;
+    margin-bottom:1.6rem;
+  }
+
+  /* ---------- surprise ---------- */
+  .surprise-wrap{ text-align:center; }
+  .surprise-reveal{
+    margin-top:2rem;
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition: max-height 0.9s ease, opacity 0.9s ease;
+  }
+  .surprise-reveal.open{
+    max-height: 900px;
+    opacity:1;
+  }
+  .surprise-card{
+    background: var(--paper);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding: 2.1rem 1.6rem;
+    box-shadow: 0 18px 40px -18px var(--shadow);
+  }
+  .surprise-card p{ font-size:1.08rem; margin-bottom:0.9rem; }
+  .surprise-final{
+    font-family: Georgia, serif;
+    font-style:italic;
+    font-size:1.25rem;
+    color: var(--gold-deep);
+    margin-top:1rem;
+  }
+  .surprise-flowers{
+    display:flex;
+    justify-content:center;
+    gap:0.5rem;
+    margin: 1.4rem 0 0.4rem;
+  }
+  .surprise-flowers svg{ width:34px; opacity:0; animation: pop 0.6s ease forwards; }
+  .surprise-reveal.open .surprise-flowers svg:nth-child(1){ animation-delay:0.05s; }
+  .surprise-reveal.open .surprise-flowers svg:nth-child(2){ animation-delay:0.2s; }
+  .surprise-reveal.open .surprise-flowers svg:nth-child(3){ animation-delay:0.35s; }
+  .surprise-reveal.open .surprise-flowers svg:nth-child(4){ animation-delay:0.5s; }
+  .surprise-reveal.open .surprise-flowers svg:nth-child(5){ animation-delay:0.65s; }
+  @keyframes pop{
+    from{ opacity:0; transform: scale(0.4) translateY(10px); }
+    to{ opacity:1; transform: scale(1) translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .surprise-flowers svg{ animation:none; opacity:1; }
+  }
+
+  /* ---------- PD note ---------- */
+  .pd{
+    text-align:center;
+    font-style:italic;
+    color: var(--ink-soft);
+    font-size:0.98rem;
+    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+  }
+  .pd strong{ color: var(--gold-deep); font-style:normal; }
+
+  footer{
+    text-align:center;
+    font-size:0.8rem;
+    color: var(--ink-soft);
+    opacity:0.65;
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .divider{
+    width:64px; height:1px;
+    background: var(--gold);
+    opacity:0.5;
+    margin: 0 auto;
+  }
+</style>
+</head>
+<body>
+
+<!-- decorative falling petals -->
+<div class="petal-field" id="petalField" aria-hidden="true"></div>
+
+<!-- shared SVG defs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="petalGradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="var(--gold-soft)"/>
+      <stop offset="100%" stop-color="var(--gold)"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="hero">
+  <svg class="hero-flower" viewBox="0 0 120 140" aria-hidden="true">
+    <path class="flower-stem" d="M60,80 C58,100 62,115 60,132"/>
+    <path class="flower-leaf" d="M60,108 C48,104 40,110 38,120 C50,122 58,116 60,108 Z"/>
+    <g>
+      <ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(0 60 60)"/>
+      <ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(45 60 60)"/>
+      <ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(90 60 60)"/>
+      <ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(135 60 60)"/>
+      <ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(180 60 60)"/>
+      <ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(225 60 60)"/>
+      <ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(270 60 60)"/>
+      <ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(315 60 60)"/>
+      <circle class="flower-center" cx="60" cy="60" r="15"/>
+    </g>
+  </svg>
+
+  <h1 class="serif">Para mi pequeña</h1>
+  <h2>Nuestro septiembre juntos (Como novios jsjsjs)</h2>
+  <p>Hoy no pude ponerte flores en las manos, mi niña... así que hice que florecieran aquí, en lo que estamos juntos, amor.</p>
+
+  <button class="btn" id="enterBtn">Entra, mi niña 💛</button>
+
+  <button type="button" class="scroll-hint" id="scrollHint" aria-label="Bajar">
+    <span>desliza</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+</section>
+
+<main id="main" hidden>
+
+  <!-- ============ INTRO ============ -->
+  <section class="section reveal">
+    <div class="lede serif">
+      <p><strong>Mi niña,</strong></p>
+      <p>Septiembre trae estas flores amarillas que, sin darnos cuenta, ya significan algo bonito entre nosotros. Y siendo nuestro primer septiembre como novios, no podía dejar pasar la fecha sin hacerte algo.</p>
+      <p>Así que hice esto para ti, amor. No son flores de verdad, pero sí están hechas pensando en ti, en tu linduraa. Por leer esto te ganaste un beso de 40 segundos (Con cronometro)🌻</p>
+    </div>
+  </section>
+
+  <!-- ============ CARTA ============ -->
+  <section class="section reveal">
+    <h3 class="title serif center">Una carta para ti 💌</h3>
+    <div class="letter-wrap">
+      <div class="letter-card">
+        <svg class="letter-seal" viewBox="0 0 60 60" aria-hidden="true">
+          <circle cx="30" cy="30" r="28" fill="var(--gold-soft)" opacity="0.35"/>
+          <ellipse class="petal-shape" cx="30" cy="16" rx="6" ry="13" transform="rotate(0 30 30)"/>
+          <ellipse class="petal-shape" cx="30" cy="16" rx="6" ry="13" transform="rotate(72 30 30)"/>
+          <ellipse class="petal-shape" cx="30" cy="16" rx="6" ry="13" transform="rotate(144 30 30)"/>
+          <ellipse class="petal-shape" cx="30" cy="16" rx="6" ry="13" transform="rotate(216 30 30)"/>
+          <ellipse class="petal-shape" cx="30" cy="16" rx="6" ry="13" transform="rotate(288 30 30)"/>
+          <circle class="flower-center" cx="30" cy="30" r="8"/>
+        </svg>
+        <div class="letter-body serif">
+          <p><strong>Annie,</strong></p>
+          <p>este es nuestro primer septiembre siendo oficialmente novios, y todavía se siente un poco irreal poder llamarte así: <strong>mi novia</strong>. Es una palabra pequeña que carga algo enorme. Y no sé cómo explicarte lo feliz que me hace poder decir que eres tú. Tenerte conmigo me hace sentir como la persona más feliz del mundo, de verdad.</p>
+          <p>No sé si te lo digo tanto como debería, pero tenerte en mi vida cambia el color de los días normales. Hasta lo simple se siente distinto cuando sé que después voy a contártelo a ti. Me hace feliz ver un mensaje tuyo, hablar contigo por horas, contarte cualquier estupidez que me pase durante el día y simplemente saber que estás ahí.</p>
+          <p>Y creo que eso es de las cosas que más amo de nosotros. Que no necesitamos hacer algo enorme para que un momento se sienta especial. A veces es solamente hablar, reírnos, jugar, molestarnos o simplemente estar ahí. Son cosas pequeñas, pero contigo terminan significando muchísimo para mí.</p>
+          <p>Por eso quería hacerte algo que fuera solamente tuyo. Algo que pudieras ver y pensar: <em>"esto lo hizo mi novio pensando en mí"</em>. Porque sí, mi niña, pienso muchísimo en ti. Me encanta tenerte en mi vida, me encanta poder llamarte mi novia y me encanta todo lo que todavía nos falta por vivir juntos.</p>
+          <p>Quiero seguir construyendo contigo, mes a mes, septiembre a septiembre. Seguir acumulando momentos, seguir conociéndote y seguir haciendo de estos pequeños "nosotros" algo cada vez más grande.</p>
+          <p>Este es apenas nuestro primer septiembre como novios.</p>
+          <p>Y espero que algún día podamos mirar atrás y decir: <strong>"Cuanto hemos vivido y hecho desde aquel primer septiembre."</strong></p>
+          <p>Te amo.</p>
+        </div>
+        <p class="signature">— tu novio</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FLORES ============ -->
+  <section class="section reveal">
+    <h3 class="title serif center">Estas son para ti, mientras llegan las de verdad 🌻</h3>
+    <div class="flower-grid" id="flowerGrid"></div>
+    <p class="flower-hint">toca cada flor</p>
+  </section>
+
+  <!-- ============ COSAS QUE AMO ============ -->
+  <section class="section reveal">
+    <h3 class="title serif center">Cosas que amo de ti</h3>
+    <div class="love-grid" id="loveGrid"></div>
+  </section>
+
+  <!-- ============ RECUERDO ============ -->
+  <section class="section tight reveal date-block">
+    <div class="date-num serif">21 de septiembre de 2026</div>
+    <div class="date-sub">Nuestro primer septiembre juntos.</div>
+    <div class="divider"></div>
+    <p class="lede" style="margin-top:1.6rem; max-width:46ch; margin-left:auto; margin-right:auto;">
+      Algún día vamos a mirar atrás y vamos a recordar este septiembre como el primero de muchos.
+    </p>
+  </section>
+
+  <!-- ============ SORPRESA ============ -->
+  <section class="section reveal surprise-wrap">
+    <button class="btn" id="surpriseBtn">Hay algo más para ti...</button>
+    <div class="surprise-reveal" id="surpriseReveal">
+      <div class="surprise-card">
+        <div class="surprise-flowers" aria-hidden="true">
+          <svg viewBox="0 0 120 120"><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(0 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(60 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(120 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(180 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(240 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(300 60 60)"/><circle class="flower-center" cx="60" cy="60" r="15"/></svg>
+          <svg viewBox="0 0 120 120"><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(0 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(60 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(120 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(180 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(240 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(300 60 60)"/><circle class="flower-center" cx="60" cy="60" r="15"/></svg>
+          <svg viewBox="0 0 120 120"><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(0 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(60 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(120 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(180 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(240 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(300 60 60)"/><circle class="flower-center" cx="60" cy="60" r="15"/></svg>
+          <svg viewBox="0 0 120 120"><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(0 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(60 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(120 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(180 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(240 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(300 60 60)"/><circle class="flower-center" cx="60" cy="60" r="15"/></svg>
+          <svg viewBox="0 0 120 120"><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(0 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(60 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(120 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(180 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(240 60 60)"/><ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(300 60 60)"/><circle class="flower-center" cx="60" cy="60" r="15"/></svg>
+        </div>
+        <p class="serif"><strong>Y bueno, mi niña...</strong></p>
+        <p class="serif"><strong>Te ganaste otro beso AMOORR. JAJAJAJA</strong></p>
+        <p class="serif">Gracias por ser tú, por estar conmigo y por hacerme tan feliz. No sé qué nos tenga preparado la vida, pero sí sé que quiero seguir descubriéndolo contigo.</p>
+        <p class="surprise-final"><em>Te amo muchísimo, mi pequeña. ❤️</em></p>
+        <p class="signature"><em>— Tu novio</em></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ P.D. ============ -->
+  <section class="section tight reveal">
+    <div class="divider" style="margin-bottom:1.6rem;"></div>
+    <p class="pd">P.D.: cuando por fin tengas tus flores amarillas en las manos, acuérdate de que <strong>estas fueron las primeras</strong> que te regalé este septiembre.</p>
+  </section>
+
+  <footer>hecho con cariño, para ti 🌻</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- falling petals ---------- */
+  var field = document.getElementById('petalField');
+  var PETAL_COUNT = reduceMotion ? 0 : 9;
+  for (var i=0; i<PETAL_COUNT; i++){
+    var p = document.createElement('div');
+    p.className = 'petal';
+    var left = Math.random()*100;
+    var duration = 10 + Math.random()*9;
+    var delay = Math.random()*-14;
+    var drift = (Math.random()*60 - 30) + 'px';
+    var scale = 0.7 + Math.random()*0.7;
+    p.style.left = left + 'vw';
+    p.style.setProperty('--drift', drift);
+    p.style.animationDuration = duration + 's';
+    p.style.animationDelay = delay + 's';
+    p.style.transform = 'scale(' + scale + ')';
+    field.appendChild(p);
+  }
+
+  /* ---------- enter experience ---------- */
+  var enterBtn = document.getElementById('enterBtn');
+  var scrollHint = document.getElementById('scrollHint');
+  var hero = document.getElementById('hero');
+  var main = document.getElementById('main');
+  var enterExperience = function(){
+    main.hidden = false;
+    requestAnimationFrame(function(){
+      main.querySelector('.section').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    });
+  };
+  enterBtn.addEventListener('click', enterExperience);
+  scrollHint.addEventListener('click', enterExperience);
+
+  /* ---------- scroll reveal ---------- */
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduceMotion){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('visible'); });
+  }
+
+  /* ---------- flowers with phrases ---------- */
+  var phrases = [
+    "Porque haces mis días más bonitos.",
+    "Porque me encanta tenerte a mi lado.",
+    "Porque eres mi niña.",
+    "Porque te amo.",
+    "Porque quiero seguir viviendo momentos contigo.",
+    "TE GANASTE UN BESOO ESPECIAL"
+  ];
+  var flowerSVG = function(){
+    return '<svg class="flower-svg" viewBox="0 0 120 140" aria-hidden="true">' +
+      '<path class="flower-stem" d="M60,78 C58,96 62,110 60,126"/>' +
+      '<path class="flower-leaf" d="M60,102 C50,99 43,104 41,113 C51,115 58,109 60,102 Z"/>' +
+      '<ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(0 60 60)"/>' +
+      '<ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(45 60 60)"/>' +
+      '<ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(90 60 60)"/>' +
+      '<ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(135 60 60)"/>' +
+      '<ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(180 60 60)"/>' +
+      '<ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(225 60 60)"/>' +
+      '<ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(270 60 60)"/>' +
+      '<ellipse class="petal-shape" cx="60" cy="32" rx="12" ry="26" transform="rotate(315 60 60)"/>' +
+      '<circle class="flower-center" cx="60" cy="60" r="15"/>' +
+      '</svg>';
+  };
+  var grid = document.getElementById('flowerGrid');
+  phrases.forEach(function(text, idx){
+    var btn = document.createElement('button');
+    btn.className = 'flower-btn';
+    btn.setAttribute('aria-expanded', 'false');
+    btn.innerHTML = flowerSVG() +
+      '<span class="flower-caption">flor ' + (idx+1) + '</span>' +
+      '<span class="flower-note">' + text + '</span>';
+    btn.addEventListener('click', function(){
+      var open = btn.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    grid.appendChild(btn);
+  });
+
+  /* ---------- love list ---------- */
+  var loveItems = [
+    "Tu forma de ser conmigo.",
+    "Cómo haces que hasta una conversación cualquiera se vuelva especial.",
+    "Tu manera de hacerme sentir acompañado.",
+    "Los momentos que compartimos, incluso cuando solo estamos hablando de nada.",
+    "Tu forma de ser tú, sin más."
+  ];
+  var loveGrid = document.getElementById('loveGrid');
+  loveItems.forEach(function(text){
+    var card = document.createElement('div');
+    card.className = 'love-card';
+    card.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/></svg><span>' + text + '</span>';
+    loveGrid.appendChild(card);
+  });
+
+  /* ---------- surprise ---------- */
+  var surpriseBtn = document.getElementById('surpriseBtn');
+  var surpriseReveal = document.getElementById('surpriseReveal');
+  surpriseBtn.addEventListener('click', function(){
+    var opening = !surpriseReveal.classList.contains('open');
+    surpriseReveal.classList.toggle('open');
+    surpriseBtn.setAttribute('aria-expanded', opening ? 'true' : 'false');
+    if (opening){
+      requestAnimationFrame(function(){
+        surpriseReveal.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>
